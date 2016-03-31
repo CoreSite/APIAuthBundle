@@ -1,0 +1,4 @@
+services:
+#    core_site_api_auth.example:
+#        class: CoreSite\APIAuthBundle\Example
+#        arguments: ["@service_id", "plain_value", %parameter%]

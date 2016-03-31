@@ -1,0 +1,3 @@
+core_site_api_auth_homepage:
+    path:     /
+    defaults: { _controller: CoreSiteAPIAuthBundle:Default:index }

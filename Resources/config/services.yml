@@ -1,4 +1,18 @@
 services:
-#    core_site_api_auth.example:
-#        class: CoreSite\APIAuthBundle\Example
-#        arguments: ["@service_id", "plain_value", %parameter%]
+    cs_apiauth_authenticator:
+        class:  CoreSite\APIAuthBundle\Security\ApiKeyAuthenticator
+        public: false
+
+    cs_apiauth_user_provider:
+        class: CoreSite\APIAuthBundle\Security\ApiKeyUserProvider
+        arguments: ['@fos_user.user_manager', '@cs_apiauth.token.manager']
+
+    cs_apiauth_user_handler_authentication_failure:
+        class: CoreSite\APIAuthBundle\Http\Authentication\AuthenticationFailureHandler
+        arguments: ['@event_dispatcher']
+        tags:
+            - { name: monolog.logger, channel: security }
+
+    cs_apiauth.token.manager:
+        class: CoreSite\APIAuthBundle\Service\TokenManager
+        arguments: ['@fos_user.user_manager', '@doctrine.orm.entity_manager']

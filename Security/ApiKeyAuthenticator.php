@@ -39,9 +39,8 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
         $apiKey = $token->getCredentials();
         $username = $userProvider->getUsernameForApiKey($apiKey);
 
-        if (!$username) {
-            // CAUTION: this message will be returned to the client
-            // (so don't put any un-trusted messages / error strings here)
+        if (!$username)
+        {
             throw new CustomUserMessageAuthenticationException(
                 sprintf('Token "%s" does not exist.', $apiKey)
             );
@@ -67,8 +66,15 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
         // Ищем токен в параметрах
         $apiKey = $request->query->get('token');
 
-        // or if you want to use an "token" header, then do something like this:
-        // $apiKey = $request->headers->get('token');
+        // Если не нашли, то в заголовках
+        if(!$apiKey)
+        {
+            $authHeader = explode(' ', $request->headers->get('Authorization'));
+            if(isset($authHeader[0]) && $authHeader[0] == 'Bearer' && isset($authHeader[1]))
+            {
+                $apiKey = $authHeader[1];
+            }
+        }
 
         if (!$apiKey) {
             throw new BadCredentialsException('No API key found');

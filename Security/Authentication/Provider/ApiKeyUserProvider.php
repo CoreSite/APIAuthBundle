@@ -6,7 +6,7 @@
  * Date: 31.03.2016 16:45
  */
 
-namespace CoreSite\APIAuthBundle\Security;
+namespace CoreSite\APIAuthBundle\Security\Authentication\Provider;
 
 use CoreSite\APIAuthBundle\Service\TokenManager;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -38,20 +38,13 @@ class ApiKeyUserProvider implements UserProviderInterface
 
     public function getUsernameForApiKey($apiKey)
     {
-        // Look up the username based on the token in the database, via
-        // an API call, or do something entirely different
-        //$username = $apiKey; // !!!!!
-
-        //$user = $this->userManager->findUserByUsernameOrEmail($apiKey);
         $user = $this->tokenManager->getUserByToken($apiKey);
 
         if(!$user instanceof UserInterface)
         {
             return false;
         }
-
-        //var_dump($username); exit();
-
+        
         return $user->getUsername();
     }
 

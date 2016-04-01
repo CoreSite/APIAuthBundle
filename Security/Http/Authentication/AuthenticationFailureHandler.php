@@ -6,7 +6,7 @@
  * Date: 31.03.2016 18:08
  */
 
-namespace CoreSite\APIAuthBundle\Http\Authentication;
+namespace CoreSite\APIAuthBundle\Security\Http\Authentication;
 
 use CoreSite\APIAuthBundle\Event\Event;
 use CoreSite\APIAuthBundle\Event\AuthenticationFailureEvent;
@@ -20,7 +20,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerI
 class AuthenticationFailureHandler implements AuthenticationFailureHandlerInterface
 {
     const RESPONSE_CODE    = 401;
-    const RESPONSE_MESSAGE = 'Bad credentials';
+    const RESPONSE_MESSAGE = 'Bad username or password.';
 
     /**
      * @var EventDispatcherInterface

@@ -1,14 +1,30 @@
 services:
     cs_apiauth_authenticator:
-        class:  CoreSite\APIAuthBundle\Security\ApiKeyAuthenticator
+        class:  CoreSite\APIAuthBundle\Security\Authorization\ApiKeyAuthenticator
         public: false
 
     cs_apiauth_user_provider:
-        class: CoreSite\APIAuthBundle\Security\ApiKeyUserProvider
+        class: CoreSite\APIAuthBundle\Security\Authentication\Provider\ApiKeyUserProvider
         arguments: ['@fos_user.user_manager', '@cs_apiauth.token.manager']
 
+    cs_apiauth_authentication_provider:
+        class: CoreSite\APIAuthBundle\Security\Authentication\Provider\ApiKeyUserAuthenticationProvider
+        arguments: ["", '@security.user_checker', "", '@security.encoder_factory']
+        public: false
+
+    cs_apiauth_user_listener:
+        class: CoreSite\APIAuthBundle\Security\Firewall\APIAuthListener
+        arguments: ['@security.token_storage', '@security.authentication.manager']
+        public: false
+
+    cs_apiauth_user_handler_authentication_success:
+        class: CoreSite\APIAuthBundle\Security\Http\Authentication\AuthenticationSuccessHandler
+        arguments: ['@event_dispatcher']
+        tags:
+            - { name: monolog.logger, channel: security }
+
     cs_apiauth_user_handler_authentication_failure:
-        class: CoreSite\APIAuthBundle\Http\Authentication\AuthenticationFailureHandler
+        class: CoreSite\APIAuthBundle\Security\Http\Authentication\AuthenticationFailureHandler
         arguments: ['@event_dispatcher']
         tags:
             - { name: monolog.logger, channel: security }
@@ -16,3 +32,7 @@ services:
     cs_apiauth.token.manager:
         class: CoreSite\APIAuthBundle\Service\TokenManager
         arguments: ['@fos_user.user_manager', '@doctrine.orm.entity_manager']
+
+    cs_apiauth_authentication_listener:
+       class: CoreSite\APIAuthBundle\Security\Http\Firewall\UsernamePasswordFormAuthenticationListener
+       arguments: ['@security.token_storage', '@security.authentication.manager', '@security.authentication.session_strategy', '@security.http_utils', "api_login", '@cs_apiauth_user_handler_authentication_success', '@cs_apiauth_user_handler_authentication_failure']

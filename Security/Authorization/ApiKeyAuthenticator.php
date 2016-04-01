@@ -6,8 +6,9 @@
  * Date: 31.03.2016 14:57
  */
 
-namespace CoreSite\APIAuthBundle\Security;
+namespace CoreSite\APIAuthBundle\Security\Authorization;
 
+use CoreSite\APIAuthBundle\Security\Authentication\Provider\ApiKeyUserProvider;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -78,9 +79,6 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
 
         if (!$apiKey) {
             throw new BadCredentialsException('No API key found');
-
-            // or to just skip api key authentication
-            // return null;
         }
 
         return new PreAuthenticatedToken(

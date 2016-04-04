@@ -17,6 +17,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use FOS\UserBundle\Doctrine\UserManager;
 
+/**
+ * Провайдер пользователя, отвечает за авторизацию по токену
+ *
+ * Class ApiKeyUserProvider
+ * @package CoreSite\APIAuthBundle\Security\Authentication\Provider
+ */
 class ApiKeyUserProvider implements UserProviderInterface
 {
     

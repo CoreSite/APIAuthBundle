@@ -18,6 +18,12 @@ use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterfac
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
+/**
+ * Похоже этот класс нам не нужен
+ *
+ * Class APIAuthListener
+ * @package CoreSite\APIAuthBundle\Security\Firewall
+ */
 class APIAuthListener implements ListenerInterface
 {
     /**
@@ -75,7 +81,7 @@ class APIAuthListener implements ListenerInterface
 
         //var_dump(123);
 
-        $token = new APIAuthToken();
+        $token = new APIAuthToken('dmitriy');
         $token
             ->setRawToken('1234567890')
         ;

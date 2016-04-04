@@ -13,43 +13,39 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\SecurityFactoryInterface;
+use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\FormLoginFactory;
 
-class APIAuthFactory implements SecurityFactoryInterface
+class APIAuthFactory extends FormLoginFactory
 {
-
-    public function create(ContainerBuilder $container, $id, $config, $userProvider, $defaultEntryPoint)
+    protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
     {
         $providerId = 'cs_apiauth_authentication_provider.'.$id;
         $container
             ->setDefinition($providerId, new DefinitionDecorator('cs_apiauth_authentication_provider'))
-            ->replaceArgument(0, new Reference($userProvider))
+            ->replaceArgument(0, new Reference($userProviderId))
             ->replaceArgument(2, $id)
         ;
 
+        return $providerId;
+    }
+
+    protected function createListener($container, $id, $config, $userProvider)
+    {
         $listenerId = 'cs_apiauth_authentication_listener.'.$id;
         $listener = $container->setDefinition($listenerId, new DefinitionDecorator('cs_apiauth_authentication_listener'));
 
-        return array($providerId, $listenerId, $defaultEntryPoint);
+        return $listenerId;
+
     }
 
-    /**
-     * Defines the position at which the provider is called.
-     * Possible values: pre_auth, form, http, and remember_me.
-     *
-     * @return string
-     */
-    public function getPosition()
-    {
-        return 'pre_auth';
-    }
+//    protected function getListenerId()
+//    {
+//        return 'security.authentication.listener.form';
+//    }
 
     public function getKey()
     {
         return 'cs_apiauth_login';
     }
 
-    public function addConfiguration(NodeDefinition $builder)
-    {
-        // TODO: Implement addConfiguration() method.
-    }
 }

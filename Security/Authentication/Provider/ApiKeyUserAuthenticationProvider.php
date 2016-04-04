@@ -20,6 +20,12 @@ use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 //use FC\UserBundle\Service\Service;
 
+/**
+ * Провайдер аутификации
+ *
+ * Class ApiKeyUserAuthenticationProvider
+ * @package CoreSite\APIAuthBundle\Security\Authentication\Provider
+ */
 class ApiKeyUserAuthenticationProvider implements AuthenticationProviderInterface
 {
 
@@ -40,10 +46,13 @@ class ApiKeyUserAuthenticationProvider implements AuthenticationProviderInterfac
 	 */
 	public function __construct(UserProviderInterface $userProvider, UserCheckerInterface $userChecker, $providerKey, EncoderFactoryInterface $encoderFactory)
 	{
+		//var_dump('ApiKeyUserAuthenticationProvider');
 		if (empty($providerKey))
 		{
 			throw new \InvalidArgumentException('$providerKey must not be empty.');
 		}
+
+		//var_dump(get_class($userProvider));
 
 		$this->userChecker = $userChecker;
 		$this->providerKey = $providerKey;
@@ -57,8 +66,6 @@ class ApiKeyUserAuthenticationProvider implements AuthenticationProviderInterfac
 	 */
 	public function authenticate(TokenInterface $token)
 	{
-		//print '@#@';
-
 		if (!$this->supports($token))
 		{
 			return false;
@@ -78,7 +85,7 @@ class ApiKeyUserAuthenticationProvider implements AuthenticationProviderInterfac
 		{
 			if ($this->hideUserNotFoundExceptions)
 			{
-				throw new BadCredentialsException('fc.user.login_page.invalid_data', 0, $notFound);
+				throw new BadCredentialsException('Username not found.', 0, $notFound);
 			}
 			$notFound->setUsername($username);
 
@@ -109,7 +116,7 @@ class ApiKeyUserAuthenticationProvider implements AuthenticationProviderInterfac
 		//$authenticatedToken = new UsernamePasswordCodeToken($user, $token->getCredentials(), $token->getCode(), $this->providerKey, $this->getRoles($user, $token));
 		//$authenticatedToken->setAttributes($token->getAttributes());
 
-		$authenticatedToken = new APIAuthToken();
+		$authenticatedToken = new APIAuthToken($username);
 		$authenticatedToken
 			->setAttributes($token->getAttributes())
 		;
@@ -122,6 +129,7 @@ class ApiKeyUserAuthenticationProvider implements AuthenticationProviderInterfac
 	 */
 	protected function checkAuthentication(UserInterface $user, APIAuthToken $token)
 	{
+		//var_dump('checkAuthentication');
 		$currentUser = $token->getUser();
 		if ($currentUser instanceof UserInterface) {
 			if ($currentUser->getPassword() !== $user->getPassword()) {

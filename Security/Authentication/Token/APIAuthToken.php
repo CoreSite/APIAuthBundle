@@ -10,6 +10,7 @@ namespace CoreSite\APIAuthBundle\Security\Authentication\Token;
 
 
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class APIAuthToken extends AbstractToken
 {
@@ -18,11 +19,12 @@ class APIAuthToken extends AbstractToken
     /**
      * {@inheritdoc}
      */
-    public function __construct(array $roles = [])
+    public function __construct($user, array $roles = [])
     {
         parent::__construct($roles);
         
         $this->setAuthenticated(count($roles) > 0);
+        $this->setUser($user);
     }
 
     /**

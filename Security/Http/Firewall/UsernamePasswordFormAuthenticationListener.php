@@ -26,19 +26,23 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class UsernamePasswordFormAuthenticationListener extends AbstractAuthenticationListener
 {
-    private $csrfTokenManager;
+    //private $csrfTokenManager;
+
+    //protected $providerKey;
 
     public function __construct(TokenStorageInterface $tokenStorage, AuthenticationManagerInterface $authenticationManager, SessionAuthenticationStrategyInterface $sessionStrategy, HttpUtils $httpUtils, $providerKey, AuthenticationSuccessHandlerInterface $successHandler, AuthenticationFailureHandlerInterface $failureHandler, array $options = array(), LoggerInterface $logger = null, EventDispatcherInterface $dispatcher = null, CsrfTokenManagerInterface $csrfTokenManager = null)
     {
+        //var_dump($providerKey);
         parent::__construct($tokenStorage, $authenticationManager, $sessionStrategy, $httpUtils, $providerKey, $successHandler, $failureHandler, array_merge(array(
             'username_parameter' => '_username',
             'password_parameter' => '_password',
-            'csrf_parameter' => '_csrf_token',
-            'csrf_token_id' => 'authenticate',
+//            'csrf_parameter' => '_csrf_token',
+//            'csrf_token_id' => 'authenticate',
             'post_only' => true,
         ), $options), $logger, $dispatcher);
 
-        $this->csrfTokenManager = $csrfTokenManager;
+        //$this->csrfTokenManager = $csrfTokenManager;
+
     }
 
     /**
@@ -58,24 +62,35 @@ class UsernamePasswordFormAuthenticationListener extends AbstractAuthenticationL
      */
     protected function attemptAuthentication(Request $request)
     {
-        if (null !== $this->csrfTokenManager) {
-            $csrfToken = ParameterBagUtils::getRequestParameterValue($request, $this->options['csrf_parameter']);
+        //print '111';
 
-            if (false === $this->csrfTokenManager->isTokenValid(new CsrfToken($this->options['csrf_token_id'], $csrfToken))) {
-                throw new InvalidCsrfTokenException('Invalid CSRF token.');
-            }
-        }
+//        if (null !== $this->csrfTokenManager) {
+//            $csrfToken = ParameterBagUtils::getRequestParameterValue($request, $this->options['csrf_parameter']);
+//
+//            if (false === $this->csrfTokenManager->isTokenValid(new CsrfToken($this->options['csrf_token_id'], $csrfToken))) {
+//                throw new InvalidCsrfTokenException('Invalid CSRF token.');
+//            }
+//        }
 
         if ($this->options['post_only']) {
-            $username = trim(ParameterBagUtils::getParameterBagValue($request->request, $this->options['username_parameter']));
-            $password = ParameterBagUtils::getParameterBagValue($request->request, $this->options['password_parameter']);
+            $username = trim($request->get($this->options['username_parameter'], null));
+            $password = $request->get($this->options['password_parameter'], null);
         } else {
-            $username = trim(ParameterBagUtils::getRequestParameterValue($request, $this->options['username_parameter']));
-            $password = ParameterBagUtils::getRequestParameterValue($request, $this->options['password_parameter']);
+            $username = trim($request->get($this->options['username_parameter'], null));
+            $password = $request->get($this->options['password_parameter'], null);
         }
 
-        $request->getSession()->set(Security::LAST_USERNAME, $username);
+        //$request->getSession()->set(Security::LAST_USERNAME, $username);
 
-        return $this->authenticationManager->authenticate(new APIAuthToken());
+        print '222';
+
+        //var_dump($username); var_dump($password);
+
+        $tokenOrResponse = $this->authenticationManager->authenticate(new UsernamePasswordToken($username, $password, $this->providerKey));
+
+        print '333';
+        var_dump(get_class($tokenOrResponse));
+
+        return $tokenOrResponse; //$this->authenticationManager->authenticate(new UsernamePasswordToken($username, $password, $this->providerKey));
     }
 }

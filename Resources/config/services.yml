@@ -1,0 +1,37 @@
+services:
+    cs_apiauth_authenticator:
+        class:  CoreSite\APIAuthBundle\Security\Authorization\ApiKeyAuthenticator
+        arguments: ['@cs_apiauth.token.manager']
+        public: false
+
+    cs_apiauth_user_provider:
+        class: CoreSite\APIAuthBundle\Security\Authentication\Provider\ApiKeyUserProvider
+        arguments: ['@fos_user.user_manager', '@cs_apiauth.token.manager']
+
+    cs_apiauth_user_handler_authentication_success:
+        class: CoreSite\APIAuthBundle\Security\Http\Authentication\AuthenticationSuccessHandler
+        arguments: ['@event_dispatcher', '@cs_apiauth.token.factory']
+        tags:
+            - { name: monolog.logger, channel: security }
+
+    cs_apiauth_user_handler_authentication_failure:
+        class: CoreSite\APIAuthBundle\Security\Http\Authentication\AuthenticationFailureHandler
+        arguments: ['@event_dispatcher']
+        tags:
+            - { name: monolog.logger, channel: security }
+
+    cs_apiauth_user_handler_logout:
+        class: CoreSite\APIAuthBundle\Security\Http\Authentication\LogoutHandler
+        arguments: ['@cs_apiauth.token.manager']
+
+    cs_apiauth_authentication_listener:
+       class: CoreSite\APIAuthBundle\Security\Http\Firewall\APIAuthAuthenticationListener
+       arguments: ['@security.token_storage', '@security.authentication.manager', '@security.authentication.session_strategy', '@security.http_utils', "api_login", '@cs_apiauth_user_handler_authentication_success', '@cs_apiauth_user_handler_authentication_failure']
+
+    cs_apiauth.token.manager:
+        class: CoreSite\APIAuthBundle\Service\HttpTokenManager
+        arguments: ['@fos_user.user_manager', '@doctrine.orm.entity_manager']
+
+    cs_apiauth.token.factory:
+        class: CoreSite\APIAuthBundle\Service\HttpTokenFactory
+        arguments: ['@cs_apiauth.token.manager']

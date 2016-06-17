@@ -1,0 +1,29 @@
+{
+  "name" : "coresite/apiauthbundle",
+  "description" : "Authorization for token for REST application.",
+  "version" : "0.1.0",
+  "type" : "symfony-bundle",
+  "homepage": "https://github.com/CoreSite/CoreBundle",
+  "license" : "MIT",
+  "keywords" : ["auth","rest", "api"],
+  "authors" : [{
+    "name" : "Dmitriy Shuba",
+    "email" : "dmitriy@core-site.com"
+  }],
+  "require" : {
+    "php": ">=7.0.0",
+    "symfony/symfony": ">=3.0",
+    "friendsofsymfony/rest-bundle": "~2.1-dev",
+    "friendsofsymfony/user-bundle": "~2.0@dev"
+  },
+  "suggest": {
+  },
+  "autoload" : {
+    "psr-4" : { "CoreSite\\APIAuthBundle\\" : "" }
+  },
+  "extra" : {
+    "branch-alias" : {
+      "dev-master" : "0.1.x-dev"
+    }
+  }
+}

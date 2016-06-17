@@ -13,8 +13,8 @@
   "require" : {
     "php": ">=7.0.0",
     "symfony/symfony": ">=3.0",
-    "friendsofsymfony/rest-bundle": "~2.1-dev",
-    "friendsofsymfony/user-bundle": "~2.0@dev"
+    "friendsofsymfony/rest-bundle": ">=2.1-dev",
+    "friendsofsymfony/user-bundle": ">=2.0@dev"
   },
   "suggest": {
   },

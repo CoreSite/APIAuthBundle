@@ -39,11 +39,12 @@ class HttpTokenManager
 
     /**
      * @param $hash
+     * @param bool $recovery
      * @return HttpToken
      */
-    public function getToken($hash)
+    public function getToken($hash, bool $recovery = false)
     {
-        return $this->entityManager->getRepository('CoreSiteAPIAuthBundle:HttpToken')->getToken($hash);
+        return $this->entityManager->getRepository('CoreSiteAPIAuthBundle:HttpToken')->getToken($hash, $recovery);
     }
     
     /**

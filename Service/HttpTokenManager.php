@@ -118,9 +118,13 @@ class HttpTokenManager
         return true;
     }
 
-    public function getUserByToken(string $token)
+    public function getUserByToken($token)
     {
-        $token = $this->entityManager->getRepository('CoreSiteAPIAuthBundle:HttpToken')->getToken($token);
+        if(!$token instanceof HttpToken)
+        {
+            $token = $this->entityManager->getRepository('CoreSiteAPIAuthBundle:HttpToken')->getToken($token);
+        }
+
         if(!$token instanceof HttpToken)
         {
             return false;

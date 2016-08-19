@@ -46,9 +46,9 @@ class HttpTokenManager
     
     /**
      * @param UserInterface $user
-     * @return HttpToken
+     * @return HttpToken|boolean
      */
-    public function createToken(UserInterface $user) : HttpToken
+    public function createToken(UserInterface $user)
     {
         $currentDateTime = new \DateTime('now');
         

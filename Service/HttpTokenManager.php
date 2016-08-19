@@ -39,12 +39,20 @@ class HttpTokenManager
 
     /**
      * @param $hash
-     * @param bool $recovery
      * @return HttpToken
      */
-    public function getToken(string $hash, bool $recovery = false)
+    public function getToken(string $hash)
     {
-        return $this->entityManager->getRepository('CoreSiteAPIAuthBundle:HttpToken')->getToken($hash, $recovery);
+        return $this->entityManager->getRepository('CoreSiteAPIAuthBundle:HttpToken')->getToken($hash);
+    }
+
+    /**
+     * @param string $hash
+     * @return mixed
+     */
+    public function getRecoveryToken(string $hash)
+    {
+        return $this->entityManager->getRepository('CoreSiteAPIAuthBundle:HttpToken')->getToken($hash, true);
     }
     
     /**
@@ -160,11 +168,11 @@ class HttpTokenManager
         return true;
     }
 
-    public function getUserByToken($token, bool $recovery = false)
+    public function getUserByToken($token)
     {
         if(!$token instanceof HttpToken)
         {
-            $token = $this->entityManager->getRepository('CoreSiteAPIAuthBundle:HttpToken')->getToken($token, $recovery);
+            $token = $this->entityManager->getRepository('CoreSiteAPIAuthBundle:HttpToken')->getToken($token);
         }
 
         if(!$token instanceof HttpToken)

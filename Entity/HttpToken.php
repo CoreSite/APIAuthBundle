@@ -56,6 +56,13 @@ class HttpToken
      */
     private $expiresAt;
 
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="recovery", type="boolean", options={"default" = false})
+     */
+    private $recovery;
+
     public function __construct()
     {
         $this->setCreatedAt(new \DateTime('now'));
@@ -165,5 +172,31 @@ class HttpToken
     public function getRefreshTo()
     {
         return $this->refreshTo;
+    }
+
+
+
+    /**
+     * Set recovery
+     *
+     * @param boolean $recovery
+     *
+     * @return HttpToken
+     */
+    public function setRecovery($recovery)
+    {
+        $this->recovery = $recovery;
+
+        return $this;
+    }
+
+    /**
+     * Get recovery
+     *
+     * @return boolean
+     */
+    public function getRecovery()
+    {
+        return $this->recovery;
     }
 }

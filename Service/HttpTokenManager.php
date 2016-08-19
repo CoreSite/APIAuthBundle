@@ -19,6 +19,8 @@ class HttpTokenManager
     const LIFE_TIME_MAX         = 86400;
     const LIFE_TIME_REFRESH     = 3600;
 
+    const LIFE_TIME_RECOVERY    = 3600;
+
     /**
      * @var UserManager
      */
@@ -81,6 +83,44 @@ class HttpTokenManager
         return $token;
     }
 
+    /**
+     * @param UserInterface $user
+     * @return bool|HttpToken
+     */
+    public function createRecoveryToken(UserInterface $user)
+    {
+        $currentDateTime = new \DateTime('now');
+
+        $expiresAt = clone $currentDateTime;
+        $expiresAt->add(new \DateInterval('PT' . self::LIFE_TIME_RECOVERY . 'S'));
+
+        $refreshTo = clone $currentDateTime;
+        $refreshTo->add(new \DateInterval('PT' . self::LIFE_TIME_RECOVERY . 'S'));
+
+        $token = new HttpToken();
+
+        $token
+            ->setUserId($user->getId())
+            ->setRefreshTo($refreshTo)
+            ->setExpiresAt($expiresAt)
+            ->setRecovery(true)
+        ;
+
+        $this->entityManager->persist($token);
+
+        try
+        {
+            $this->entityManager->flush();
+        }
+        catch(ConstraintViolationException $e)
+        {
+            error_log($e->getMessage());
+            return false;
+        }
+
+        return $token;
+    }
+
     public function deleteToken(HttpToken $token) : bool
     {
         $this->entityManager->remove($token);
@@ -118,11 +158,11 @@ class HttpTokenManager
         return true;
     }
 
-    public function getUserByToken($token)
+    public function getUserByToken($token, bool $recovery = false)
     {
         if(!$token instanceof HttpToken)
         {
-            $token = $this->entityManager->getRepository('CoreSiteAPIAuthBundle:HttpToken')->getToken($token);
+            $token = $this->entityManager->getRepository('CoreSiteAPIAuthBundle:HttpToken')->getToken($token, $recovery);
         }
 
         if(!$token instanceof HttpToken)

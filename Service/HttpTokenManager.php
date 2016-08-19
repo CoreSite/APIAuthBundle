@@ -42,7 +42,7 @@ class HttpTokenManager
      * @param bool $recovery
      * @return HttpToken
      */
-    public function getToken($hash, bool $recovery = false)
+    public function getToken(string $hash, bool $recovery = false)
     {
         return $this->entityManager->getRepository('CoreSiteAPIAuthBundle:HttpToken')->getToken($hash, $recovery);
     }

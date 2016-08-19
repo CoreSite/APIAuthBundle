@@ -67,6 +67,7 @@ class HttpTokenManager
             ->setUserId($user->getId())
             ->setRefreshTo($refreshTo)
             ->setExpiresAt($expiresAt)
+            ->setRecovery(false)
         ;
 
         $this->entityManager->persist($token);

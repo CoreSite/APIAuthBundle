@@ -174,8 +174,6 @@ class HttpToken
         return $this->refreshTo;
     }
 
-
-
     /**
      * Set recovery
      *

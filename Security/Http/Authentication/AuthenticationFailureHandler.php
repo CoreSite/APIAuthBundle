@@ -27,7 +27,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerI
 class AuthenticationFailureHandler implements AuthenticationFailureHandlerInterface
 {
     const RESPONSE_CODE    = 401;
-    const RESPONSE_MESSAGE = 'Bad username or password.';
+    const RESPONSE_MESSAGE = 'cs_auth_api.bad_username_or_password';
 
     /**
      * @var EventDispatcherInterface

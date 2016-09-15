@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class AuthenticationFailureHandler
@@ -35,9 +36,14 @@ class AuthenticationFailureHandler implements AuthenticationFailureHandlerInterf
     protected $dispatcher;
 
     /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
      * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(EventDispatcherInterface $dispatcher)
+    public function __construct(EventDispatcherInterface $dispatcher, TranslatorInterface $translator)
     {
         $this->dispatcher = $dispatcher;
     }
@@ -56,7 +62,7 @@ class AuthenticationFailureHandler implements AuthenticationFailureHandlerInterf
     {
         $data = [
             'code'    => self::RESPONSE_CODE,
-            'message' => self::RESPONSE_MESSAGE,
+            'message' => $this->translator->trans(self::RESPONSE_MESSAGE),
         ];
 
         $response = new JsonResponse($data, self::RESPONSE_CODE);

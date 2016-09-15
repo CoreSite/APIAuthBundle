@@ -16,7 +16,7 @@ services:
 
     cs_apiauth_user_handler_authentication_failure:
         class: CoreSite\APIAuthBundle\Security\Http\Authentication\AuthenticationFailureHandler
-        arguments: ['@event_dispatcher']
+        arguments: ['@event_dispatcher', '@translator']
         tags:
             - { name: monolog.logger, channel: security }
 

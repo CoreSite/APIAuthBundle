@@ -16,8 +16,8 @@ use Doctrine\DBAL\Exception\ConstraintViolationException;
 
 class HttpTokenManager
 {
-    const LIFE_TIME_MAX         = 86400;
-    const LIFE_TIME_REFRESH     = 3600;
+    const LIFE_TIME_MAX         = 604800;
+    const LIFE_TIME_REFRESH     = 86400;
 
     const LIFE_TIME_RECOVERY    = 3600;
 

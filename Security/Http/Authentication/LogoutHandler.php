@@ -10,6 +10,7 @@ namespace CoreSite\APIAuthBundle\Security\Http\Authentication;
 
 
 use CoreSite\APIAuthBundle\Entity\HttpToken;
+use CoreSite\APIAuthBundle\Service\HttpTokenFactory;
 use CoreSite\APIAuthBundle\Service\HttpTokenManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -82,6 +83,9 @@ class LogoutHandler implements AuthenticationFailureHandlerInterface, LogoutSucc
             return new JsonResponse($data, self::RESPONSE_FAILURE_CODE);
         }
 
+        // Удаляем токен сессии <<
+        $request->getSession()->remove(HttpTokenFactory::SESSION_NAME);
+        // Удаляем токен сессии >>
 
         $data = [
             'code'    => self::RESPONSE_SUCCESS_CODE,

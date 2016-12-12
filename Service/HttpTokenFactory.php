@@ -16,6 +16,8 @@ class HttpTokenFactory
     const LIFE_TIME_MAX         = 86400;
     const LIFE_TIME_REFRESH     = 86400;
 
+    const SESSION_NAME          = 'cs_auth_token';
+
     private $tokenManager;
 
     public function __construct(HttpTokenManager $tokenManager)

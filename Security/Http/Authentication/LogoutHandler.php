@@ -96,7 +96,7 @@ class LogoutHandler implements AuthenticationFailureHandlerInterface, LogoutSucc
         $response = new JsonResponse($data, self::RESPONSE_SUCCESS_CODE);
 
         // Удаляем токен из куков <<
-        $response->headers->setCookie(new Cookie(HttpTokenFactory::SESSION_NAME));
+        $response->headers->setCookie(new Cookie(HttpTokenFactory::SESSION_NAME, null, '/', $request->getHost()));
         // Удаляем токен из куков >>
 
         return new JsonResponse($data, self::RESPONSE_SUCCESS_CODE);

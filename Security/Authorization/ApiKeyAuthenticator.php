@@ -92,9 +92,9 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
             $apiKey = $authHeader[1];
         }
 
-        if (!$apiKey) {
-            throw new BadCredentialsException('No API key found');
-        }
+//        if (!$apiKey) {
+//            throw new BadCredentialsException('No API key found');
+//        }
 
         return new APIAuthToken(
             'anon.',

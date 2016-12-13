@@ -65,7 +65,8 @@ class AuthenticationSuccessHandler implements AuthenticationSuccessHandlerInterf
         $httpToken = $this->httpTokenFactory->createToken($user);
 
         // Сохраняем токен в сессии <<
-        $request->getSession()->set(HttpTokenFactory::SESSION_NAME, $httpToken->getId());
+        $request->cookies->set(HttpTokenFactory::SESSION_NAME, $httpToken->getId());
+        //$request->getSession()->set(HttpTokenFactory::SESSION_NAME, $httpToken->getId());
         // Сохраняем токен в сессии >>
 
         $response = new JsonResponse();

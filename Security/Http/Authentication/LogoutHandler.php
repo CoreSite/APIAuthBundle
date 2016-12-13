@@ -84,7 +84,8 @@ class LogoutHandler implements AuthenticationFailureHandlerInterface, LogoutSucc
         }
 
         // Удаляем токен сессии <<
-        $request->getSession()->remove(HttpTokenFactory::SESSION_NAME);
+        $request->cookies->remove(HttpTokenFactory::SESSION_NAME);
+        //$request->getSession()->remove(HttpTokenFactory::SESSION_NAME);
         // Удаляем токен сессии >>
 
         $data = [

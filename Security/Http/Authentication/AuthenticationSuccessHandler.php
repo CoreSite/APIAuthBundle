@@ -11,6 +11,7 @@ namespace CoreSite\APIAuthBundle\Security\Http\Authentication;
 use CoreSite\APIAuthBundle\Event\AuthenticationSuccessEvent;
 use CoreSite\APIAuthBundle\Service\HttpTokenFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -65,11 +66,15 @@ class AuthenticationSuccessHandler implements AuthenticationSuccessHandlerInterf
         $httpToken = $this->httpTokenFactory->createToken($user);
 
         // Сохраняем токен в сессии <<
-        $request->cookies->set(HttpTokenFactory::SESSION_NAME, $httpToken->getId());
         //$request->getSession()->set(HttpTokenFactory::SESSION_NAME, $httpToken->getId());
         // Сохраняем токен в сессии >>
 
         $response = new JsonResponse();
+
+        // Сохраняем токен в cookie <<
+        $response->headers->setCookie(new Cookie(HttpTokenFactory::SESSION_NAME, $httpToken->getId()));
+        // Сохраняем токен в cookie >>
+
         $event    = new AuthenticationSuccessEvent([
             'token'         => $httpToken->getId(),
             'expires'       => $httpToken->getExpiresAt()->getTimestamp(),

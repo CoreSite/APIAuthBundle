@@ -12,6 +12,7 @@ namespace CoreSite\APIAuthBundle\Security\Http\Authentication;
 use CoreSite\APIAuthBundle\Entity\HttpToken;
 use CoreSite\APIAuthBundle\Service\HttpTokenFactory;
 use CoreSite\APIAuthBundle\Service\HttpTokenManager;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -84,7 +85,6 @@ class LogoutHandler implements AuthenticationFailureHandlerInterface, LogoutSucc
         }
 
         // Удаляем токен сессии <<
-        $request->cookies->remove(HttpTokenFactory::SESSION_NAME);
         //$request->getSession()->remove(HttpTokenFactory::SESSION_NAME);
         // Удаляем токен сессии >>
 
@@ -92,6 +92,12 @@ class LogoutHandler implements AuthenticationFailureHandlerInterface, LogoutSucc
             'code'    => self::RESPONSE_SUCCESS_CODE,
             'message' => self::RESPONSE_SUCCESS_MESSAGE,
         ];
+
+        $response = new JsonResponse($data, self::RESPONSE_SUCCESS_CODE);
+
+        // Удаляем токен из куков <<
+        $response->headers->setCookie(new Cookie(HttpTokenFactory::SESSION_NAME));
+        // Удаляем токен из куков >>
 
         return new JsonResponse($data, self::RESPONSE_SUCCESS_CODE);
     }

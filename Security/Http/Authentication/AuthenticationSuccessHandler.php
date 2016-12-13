@@ -72,7 +72,7 @@ class AuthenticationSuccessHandler implements AuthenticationSuccessHandlerInterf
         $response = new JsonResponse();
 
         // Сохраняем токен в cookie <<
-        $response->headers->setCookie(new Cookie(HttpTokenFactory::SESSION_NAME, $httpToken->getId(), '/', $request->getHost()));
+        $response->headers->setCookie(new Cookie(HttpTokenFactory::SESSION_NAME, $httpToken->getId(), 0, '/', $request->getHost()));
         // Сохраняем токен в cookie >>
 
         $event    = new AuthenticationSuccessEvent([

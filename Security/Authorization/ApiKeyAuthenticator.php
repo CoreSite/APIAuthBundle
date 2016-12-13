@@ -15,10 +15,12 @@ use CoreSite\APIAuthBundle\Service\HttpTokenManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
+use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
@@ -93,8 +95,8 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
         }
 
         if (!$apiKey) {
-            return null;
-            //throw new BadCredentialsException('No API key found');
+            //return null;
+            throw new BadCredentialsException('No API key found');
         }
 
         return new APIAuthToken(

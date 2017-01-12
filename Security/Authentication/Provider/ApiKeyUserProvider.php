@@ -67,6 +67,11 @@ class ApiKeyUserProvider implements UserProviderInterface
 
     public function loadUserByToken($token)
     {
+        if(empty($token))
+        {
+            return false;
+        }
+
         $user = $this->userManager->findUserBy(['token' => $token]);
 
         if(!$user instanceof UserInterface)

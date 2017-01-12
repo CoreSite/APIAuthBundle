@@ -67,7 +67,7 @@ class ApiKeyUserProvider implements UserProviderInterface
 
     public function loadUserByToken($token)
     {
-        if(empty($token))
+        if(empty($token) || strlen($token) < 32)
         {
             return false;
         }

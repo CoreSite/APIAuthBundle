@@ -23,13 +23,21 @@ class APIAuthToken extends AbstractToken
     private $providerKey;
 
     /**
+     * Устанавливается для постоянных токенов
+     *
+     * @var bool
+     */
+    private $constant;
+
+    /**
      * APIAuthToken constructor.
      * @param array|\string[]|\Symfony\Component\Security\Core\Role\RoleInterface[] $user
      * @param $credentials
      * @param $providerKey
      * @param array $roles
+     * @param bool $constant
      */
-    public function __construct($user, $credentials, $providerKey, array $roles = array())
+    public function __construct($user, $credentials, $providerKey, array $roles = [], $constant = false)
     {
         parent::__construct($roles);
 
@@ -40,6 +48,7 @@ class APIAuthToken extends AbstractToken
         $this->setUser($user);
         $this->credentials = $credentials;
         $this->providerKey = $providerKey;
+        $this->constant = $constant;
 
         parent::setAuthenticated(count($roles) > 0);
     }
@@ -90,4 +99,23 @@ class APIAuthToken extends AbstractToken
         list($this->credentials, $this->providerKey, $parentStr) = unserialize($serialized);
         parent::unserialize($parentStr);
     }
+
+    /**
+     * @return boolean
+     */
+    public function isConstant(): bool
+    {
+        return (bool)$this->constant;
+    }
+
+    /**
+     * @param boolean $constant
+     * @return APIAuthToken
+     */
+    public function setConstant(bool $constant): APIAuthToken
+    {
+        $this->constant = $constant;
+        return $this;
+    }
+
 }

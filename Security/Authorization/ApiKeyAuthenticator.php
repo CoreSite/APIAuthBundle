@@ -56,27 +56,40 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
             );
         }
 
-        /**
-         * Получаем ключ из токен
-         */
-        $apiKey = $token->getCredentials();
 
-        /**
-         * Загружаем пользователя по ранее полученному имени
-         */
-        $user = $userProvider->loadUserByApiKey($apiKey);
-        if(!$user instanceof UserInterface)
+        /** @var APIAuthToken $token */
+        $apiKey = $token->getCredentials();
+        $user = null;
+
+        if($token->isConstant())
         {
-            throw new CustomUserMessageAuthenticationException(
-                sprintf('Token "%s" does not exist.', $apiKey)
-            );
+            $user = $userProvider->loadUserByToken($apiKey);
+            if(!$user instanceof UserInterface)
+            {
+                throw new CustomUserMessageAuthenticationException(
+                    sprintf('Token "%s" does not exist.', $apiKey)
+                );
+            }
         }
+        else
+        {
+            $user = $userProvider->loadUserByApiKey($apiKey);
+            if(!$user instanceof UserInterface)
+            {
+                throw new CustomUserMessageAuthenticationException(
+                    sprintf('Bearer "%s" does not exist.', $apiKey)
+                );
+            }
+        }
+
+
 
         return new APIAuthToken(
             $user,
             $apiKey,
             $providerKey,
-            $user->getRoles()
+            array_merge($user->getRoles(), $token->getRoles()),
+            $token->isConstant()
         );
     }
 
@@ -87,11 +100,19 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
 
     public function createToken(Request $request, $providerKey)
     {
+        $roles = [];
+        $constant = false;
         $apiKey = null;
         $authHeader = explode(' ', $request->headers->get('Authorization'));
         if(isset($authHeader[0]) && $authHeader[0] == 'Bearer' && isset($authHeader[1]))
         {
             $apiKey = $authHeader[1];
+        }
+        elseif(isset($authHeader[0]) && $authHeader[0] == 'Token' && isset($authHeader[1]))
+        {
+            $apiKey = $authHeader[1];
+            $constant = true;
+            $roles = ['ROLE_TOKEN_API'];
         }
 
         if (!$apiKey) {
@@ -102,7 +123,9 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
         return new APIAuthToken(
             'anon.',
             $apiKey,
-            $providerKey
+            $providerKey,
+            $roles,
+            $constant
         );
     }
 

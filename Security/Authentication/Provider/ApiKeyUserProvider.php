@@ -65,6 +65,18 @@ class ApiKeyUserProvider implements UserProviderInterface
         return $user;
     }
 
+    public function loadUserByToken($token)
+    {
+        $user = $this->userManager->findUserBy(['token' => $token]);
+
+        if(!$user instanceof UserInterface)
+        {
+            throw new UsernameNotFoundException(sprintf('No record found for token %s', $token));
+        }
+
+        return $user;
+    }
+
     public function loadUserByUsername($username)
     {
         $user = $this->userManager->findUserByUsernameOrEmail($username);

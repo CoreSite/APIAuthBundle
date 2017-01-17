@@ -24,19 +24,21 @@ use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\FormLogin
  */
 class APIAuthFactory extends FormLoginFactory
 {
-    protected function createListener(ContainerBuilder $container, $id, $config, $userProvider, $defaultEntryPoint)
+    public function create(ContainerBuilder $container, $id, $config, $userProviderId, $defaultEntryPointId)
     {
         $providerId = 'fcs_apiauth.authentication.provider.'.$id;
         $container
             ->setDefinition($providerId, new DefinitionDecorator('cs_apiauth.authentication.provider'))
-            ->replaceArgument(1, new Reference($userProvider))
-            ->replaceArgument(3, $id)
+            //->replaceArgument(1, new Reference($userProviderId))
+            //->replaceArgument(3, $id)
         ;
 
         $listenerId = 'cs_apiauth_authentication_listener.'.$id;
         $listener = $container->setDefinition($listenerId, new DefinitionDecorator('cs_apiauth_authentication_listener'));
 
-        return [$providerId, $listenerId, $defaultEntryPoint];
+        $entryPointId = $this->createEntryPoint($container, $id, $config, $defaultEntryPointId);
+
+        return [$providerId, $listenerId, $entryPointId];
 
     }
 

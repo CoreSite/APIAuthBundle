@@ -37,8 +37,10 @@ services:
         arguments: ['@cs_apiauth.token.manager']
 
     cs_apiauth.authentication.provider:
-        class: CoreSite\APIAuthBundle\Security\Authentication\Provider\UserAuthenticationProvider
+        class: CoreSite\APIAuthBundle\Security\Authentication\Provider\ApiUserAuthenticationProvider
         arguments:
+            - '@security.user_checker'
             - '' # User Provider
-            - '@cache.app'
+            - ''
+            - '@fos_user.user_manager'
         public: false

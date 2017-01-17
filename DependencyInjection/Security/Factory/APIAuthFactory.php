@@ -29,8 +29,8 @@ class APIAuthFactory extends FormLoginFactory
         $providerId = 'fcs_apiauth.authentication.provider.'.$id;
         $container
             ->setDefinition($providerId, new DefinitionDecorator('cs_apiauth.authentication.provider'))
-            //->replaceArgument(1, new Reference($userProviderId))
-            //->replaceArgument(3, $id)
+            //->replaceArgument(2, new Reference($userProviderId))
+            ->replaceArgument(1, $id)
         ;
 
         $listenerId = 'cs_apiauth_authentication_listener.'.$id;

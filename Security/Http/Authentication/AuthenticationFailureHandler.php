@@ -63,7 +63,7 @@ class AuthenticationFailureHandler implements AuthenticationFailureHandlerInterf
     {
         $data = [
             'code'    => self::RESPONSE_CODE,
-            'message' => $this->translator->trans(self::RESPONSE_MESSAGE),
+            'message' => $this->translator->trans(self::RESPONSE_MESSAGE . '[' . $exception->getMessage() . ']'),
         ];
 
         $response = new JsonResponse($data, self::RESPONSE_CODE);

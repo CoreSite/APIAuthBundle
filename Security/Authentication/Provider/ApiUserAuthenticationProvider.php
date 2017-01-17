@@ -12,9 +12,7 @@ namespace CoreSite\APIAuthBundle\Security\Authentication\Provider;
 use CoreSite\APIAuthBundle\Security\Authentication\Token\APIAuthToken;
 use FOS\UserBundle\Doctrine\UserManager;
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
-use Symfony\Component\Security\Core\Authentication\Provider\UserAuthenticationProvider;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
@@ -43,8 +41,6 @@ class ApiUserAuthenticationProvider implements AuthenticationProviderInterface
 
     public function __construct(UserCheckerInterface $userChecker, $providerKey, $hideUserNotFoundExceptions, UserManager $userManager)
     {
-        //parent::__construct($userChecker, $providerKey, $hideUserNotFoundExceptions);
-
         $this->userChecker = $userChecker;
         $this->providerKey = $providerKey;
         $this->userManager = $userManager;

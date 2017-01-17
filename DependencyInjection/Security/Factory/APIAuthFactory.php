@@ -8,6 +8,7 @@
 
 namespace CoreSite\APIAuthBundle\DependencyInjection\Security\Factory;
 
+use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AbstractFactory;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
@@ -26,10 +27,9 @@ class APIAuthFactory extends FormLoginFactory
 {
     public function create(ContainerBuilder $container, $id, $config, $userProviderId, $defaultEntryPointId)
     {
-        $providerId = 'fcs_apiauth.authentication.provider.'.$id;
+        $providerId = 'cs_apiauth.authentication.provider.'.$id;
         $container
             ->setDefinition($providerId, new DefinitionDecorator('cs_apiauth.authentication.provider'))
-            //->replaceArgument(2, new Reference($userProviderId))
             ->replaceArgument(1, $id)
         ;
 
@@ -39,7 +39,25 @@ class APIAuthFactory extends FormLoginFactory
         $entryPointId = $this->createEntryPoint($container, $id, $config, $defaultEntryPointId);
 
         return [$providerId, $listenerId, $entryPointId];
+    }
 
+    protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
+    {
+        $providerId = 'cs_apiauth.authentication.provider.'.$id;
+        $container
+            ->setDefinition($providerId, new DefinitionDecorator('cs_apiauth.authentication.provider'))
+            ->replaceArgument(1, $id)
+        ;
+
+        return $providerId;
+    }
+
+    protected function createListener($container, $id, $config, $userProvider)
+    {
+        $listenerId = 'cs_apiauth_authentication_listener.'.$id;
+        $listener = $container->setDefinition($listenerId, new DefinitionDecorator('cs_apiauth_authentication_listener'));
+
+        return $listenerId;
     }
 
     public function getKey()
@@ -52,10 +70,9 @@ class APIAuthFactory extends FormLoginFactory
         return 'security.authentication.listener.form';
     }
 
-    public function getPosition()
-    {
-        return 'pre_auth';
-    }
-
+//    public function getPosition()
+//    {
+//        return 'pre_auth';
+//    }
 
 }

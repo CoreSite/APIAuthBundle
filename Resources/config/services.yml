@@ -35,3 +35,10 @@ services:
     cs_apiauth.token.factory:
         class: CoreSite\APIAuthBundle\Service\HttpTokenFactory
         arguments: ['@cs_apiauth.token.manager']
+
+    cs_apiauth.authentication.provider:
+        class: CoreSite\APIAuthBundle\Security\Authentication\Provider\UserAuthenticationProvider
+        arguments:
+            - '' # User Provider
+            - '@cache.app'
+        public: false

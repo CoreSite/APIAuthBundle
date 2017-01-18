@@ -56,8 +56,7 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
                 )
             );
         }
-
-
+        
         /** @var APIAuthToken $token */
         $apiKey = $token->getCredentials();
         $user = null;
@@ -85,10 +84,7 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
             if($user instanceof AccountUserInterface && !$user->getAccount()->getEnabled()) {
                 throw new CustomUserMessageAuthenticationException('Account has been blocked');
             }
-
         }
-
-
 
         return new APIAuthToken(
             $user,

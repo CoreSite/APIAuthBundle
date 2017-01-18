@@ -87,20 +87,13 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
             throw new CustomUserMessageAuthenticationException(sprintf('Account "%s" has been blocked', $user->getAccount()->getTitle()));
         }
 
-        return new PreAuthenticatedToken(
+        return new APIAuthToken(
             $user,
             $apiKey,
             $providerKey,
-            $user->getRoles()
+            array_merge($user->getRoles(), $token->getRoles()),
+            $token->isConstant()
         );
-
-//        return new APIAuthToken(
-//            $user,
-//            $apiKey,
-//            $providerKey,
-//            array_merge($user->getRoles(), $token->getRoles()),
-//            $token->isConstant()
-//        );
     }
 
     public function supportsToken(TokenInterface $token, $providerKey)
@@ -130,19 +123,13 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
             throw new BadCredentialsException('No API key found');
         }
 
-        return new PreAuthenticatedToken(
+        return new APIAuthToken(
             'anon.',
             $apiKey,
-            $providerKey
+            $providerKey,
+            $roles,
+            $constant
         );
-
-//        return new APIAuthToken(
-//            'anon.',
-//            $apiKey,
-//            $providerKey,
-//            $roles,
-//            $constant
-//        );
     }
 
     /**

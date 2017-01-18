@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
@@ -86,18 +87,25 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
             throw new CustomUserMessageAuthenticationException(sprintf('Account "%s" has been blocked', $user->getAccount()->getTitle()));
         }
 
-        return new APIAuthToken(
+        return new PreAuthenticatedToken(
             $user,
             $apiKey,
             $providerKey,
-            array_merge($user->getRoles(), $token->getRoles()),
-            $token->isConstant()
+            $user->getRoles()
         );
+
+//        return new APIAuthToken(
+//            $user,
+//            $apiKey,
+//            $providerKey,
+//            array_merge($user->getRoles(), $token->getRoles()),
+//            $token->isConstant()
+//        );
     }
 
     public function supportsToken(TokenInterface $token, $providerKey)
     {
-        return $token instanceof APIAuthToken && $token->getProviderKey() === $providerKey;
+        return $token instanceof PreAuthenticatedToken && $token->getProviderKey() === $providerKey;
     }
 
     public function createToken(Request $request, $providerKey)
@@ -122,13 +130,19 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
             throw new BadCredentialsException('No API key found');
         }
 
-        return new APIAuthToken(
+        return new PreAuthenticatedToken(
             'anon.',
             $apiKey,
-            $providerKey,
-            $roles,
-            $constant
+            $providerKey
         );
+
+//        return new APIAuthToken(
+//            'anon.',
+//            $apiKey,
+//            $providerKey,
+//            $roles,
+//            $constant
+//        );
     }
 
     /**
@@ -145,7 +159,7 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
     {
         $data = array(
             'code'      => self::RESPONSE_FAILURE_CODE,
-            'message'   => strtr($exception->getMessageKey(), $exception->getMessageData()) . '@#@'
+            'message'   => strtr($exception->getMessageKey(), $exception->getMessageData())
 
             // or to translate this message
             // $this->translator->trans($exception->getMessageKey(), $exception->getMessageData())

@@ -31,6 +31,7 @@ class ApiUserAuthenticationProvider implements AuthenticationProviderInterface
     const MESSAGE_FAIL_ACCOUNT_HAS_BEEN_BLOCKED = 'cs_auth_api.fail.account_has_been_blocked';
     const MESSAGE_FAIL_PASSWORD_CANNOT_BE_EMPTY = 'cs_auth_api.fail.password_cannot_be_empty';
     const MESSAGE_FAIL_PASSWORD_IS_INVALID      = 'cs_auth_api.fail.password_is_invalid';
+    const MESSAGE_FAIL_USERNAME_IS_INVALID      = 'cs_auth_api.fail.username_is_invalid';
 
     /**
      * @var UserManager
@@ -94,7 +95,7 @@ class ApiUserAuthenticationProvider implements AuthenticationProviderInterface
             $user = $this->userManager->findUserByUsernameOrEmail($username);
 
             if (!$user instanceof UserInterface) {
-                throw new AuthenticationServiceException('The user provider must return a UserInterface object.');
+                throw new AuthenticationServiceException(self::MESSAGE_FAIL_USERNAME_IS_INVALID);
             }
 
             return $user;

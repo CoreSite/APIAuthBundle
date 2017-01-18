@@ -145,7 +145,7 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
     {
         $data = array(
             'code'      => self::RESPONSE_FAILURE_CODE,
-            'message'   => strtr($exception->getMessageKey(), $exception->getMessageData())
+            'message'   => strtr($exception->getMessageKey(), $exception->getMessageData()) . '@#@'
 
             // or to translate this message
             // $this->translator->trans($exception->getMessageKey(), $exception->getMessageData())

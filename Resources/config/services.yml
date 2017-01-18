@@ -43,4 +43,5 @@ services:
             - '' # User Provider
             - ''
             - '@fos_user.user_manager'
+            - '@security.encoder_factory'
         public: false

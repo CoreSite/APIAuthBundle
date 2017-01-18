@@ -1,7 +1,7 @@
 {
   "name" : "coresite/apiauthbundle",
   "description" : "Authorization for token for REST application.",
-  "version" : "0.3.0",
+  "version" : "0.3.1",
   "type" : "symfony-bundle",
   "homepage": "https://github.com/CoreSite/CoreBundle",
   "license" : "MIT",
@@ -14,7 +14,8 @@
     "php": ">=7.0.0",
     "symfony/symfony": ">=3.0",
     "friendsofsymfony/rest-bundle": ">=2.1-dev",
-    "friendsofsymfony/user-bundle": ">=2.0-dev"
+    "friendsofsymfony/user-bundle": ">=2.0-dev",
+    "coresite/corebundle": ">=0.2.0-dev"
   },
   "suggest": {
   },

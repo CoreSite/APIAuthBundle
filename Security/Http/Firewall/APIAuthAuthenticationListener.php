@@ -66,6 +66,6 @@ class APIAuthAuthenticationListener extends AbstractAuthenticationListener
             $password = $request->get($this->options['password_parameter'], null);
         }
 
-        return $this->authenticationManager->authenticate(new UsernamePasswordToken($username, $password, $this->providerKey));
+        return $this->authenticationManager->authenticate(new APIAuthToken($username, $password, $this->providerKey));
     }
 }

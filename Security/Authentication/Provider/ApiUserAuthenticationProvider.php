@@ -10,9 +10,12 @@ namespace CoreSite\APIAuthBundle\Security\Authentication\Provider;
 
 
 use CoreSite\APIAuthBundle\Security\Authentication\Token\APIAuthToken;
+use CoreSite\CoreBundle\Entity\AccountInterface;
+use CoreSite\CoreBundle\Entity\AccountUserInterface;
 use FOS\UserBundle\Doctrine\UserManager;
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
@@ -24,6 +27,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class ApiUserAuthenticationProvider implements AuthenticationProviderInterface
 {
+    const MESSAGE_FAIL_ACCOUNT_HAS_BEEN_BLOCKED = 'cs_core.fail.account_has_been_blocked';
+    const MESSAGE_FAIL_PASSWORD_CANNOT_BE_EMPTY = 'cs_core.fail.password_cannot_be_empty';
+    const MESSAGE_FAIL_PASSWORD_IS_INVALID      = 'cs_core.fail.password_is_invalid';
+
     /**
      * @var UserManager
      */
@@ -39,11 +46,17 @@ class ApiUserAuthenticationProvider implements AuthenticationProviderInterface
      */
     private $providerKey;
 
-    public function __construct(UserCheckerInterface $userChecker, $providerKey, $hideUserNotFoundExceptions, UserManager $userManager)
+    /**
+     * @var EncoderFactoryInterface
+     */
+    private $encoderFactory;
+
+    public function __construct(UserCheckerInterface $userChecker, $providerKey, $hideUserNotFoundExceptions, UserManager $userManager, EncoderFactoryInterface $encoderFactory)
     {
         $this->userChecker = $userChecker;
         $this->providerKey = $providerKey;
         $this->userManager = $userManager;
+        $this->encoderFactory = $encoderFactory;
     }
 
     /**
@@ -105,9 +118,25 @@ class ApiUserAuthenticationProvider implements AuthenticationProviderInterface
     protected function checkAuthentication(UserInterface $user, TokenInterface $token)
     {
         $currentUser = $token->getUser();
-        if(!$currentUser instanceof UserInterface) {
-
+        if($currentUser instanceof UserInterface) {
+            if ($currentUser->getPassword() !== $user->getPassword()) {
+                throw new BadCredentialsException('The credentials were changed from another session.');
+            }
         } else {
+
+            if ("" === ($presentedPassword = $token->getCredentials())) {
+                throw new BadCredentialsException(self::MESSAGE_FAIL_PASSWORD_CANNOT_BE_EMPTY);
+            }
+
+            if (!$this->encoderFactory->getEncoder($user)->isPasswordValid($user->getPassword(), $presentedPassword, $user->getSalt())) {
+                throw new BadCredentialsException(self::MESSAGE_FAIL_PASSWORD_IS_INVALID);
+            }
+
+            if($user instanceof AccountUserInterface
+                && $user->getAccount() instanceof AccountInterface
+                && $user->getAccount()->getEnabled() == false) {
+                throw new BadCredentialsException(self::MESSAGE_FAIL_ACCOUNT_HAS_BEEN_BLOCKED);
+            }
 
         }
     }

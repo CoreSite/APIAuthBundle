@@ -78,35 +78,35 @@ class ApiUserAuthenticationProvider implements AuthenticationProviderInterface
         return $token instanceof APIAuthToken;
     }
 
-//    /**
-//     * @param $username
-//     * @param TokenInterface $token
-//     * @return \FOS\UserBundle\Model\UserInterface|mixed
-//     */
-//    protected function retrieveUser($username, TokenInterface $token)
-//    {
-//        $user = $token->getUser();
-//        if ($user instanceof UserInterface) {
-//            return $user;
-//        }
-//
-//        try {
-//            $user = $this->userManager->findUserByUsernameOrEmail($username);
-//
-//            if (!$user instanceof UserInterface) {
-//                throw new AuthenticationServiceException('The user provider must return a UserInterface object.');
-//            }
-//
-//            return $user;
-//        } catch (UsernameNotFoundException $e) {
-//            $e->setUsername($username);
-//            throw $e;
-//        } catch (\Exception $e) {
-//            $e = new AuthenticationServiceException($e->getMessage(), 0, $e);
-//            $e->setToken($token);
-//            throw $e;
-//        }
-//    }
+    /**
+     * @param $username
+     * @param TokenInterface $token
+     * @return \FOS\UserBundle\Model\UserInterface|mixed
+     */
+    protected function retrieveUser($username, TokenInterface $token)
+    {
+        $user = $token->getUser();
+        if ($user instanceof UserInterface) {
+            return $user;
+        }
+
+        try {
+            $user = $this->userManager->findUserByUsernameOrEmail($username);
+
+            if (!$user instanceof UserInterface) {
+                throw new AuthenticationServiceException('The user provider must return a UserInterface object.');
+            }
+
+            return $user;
+        } catch (UsernameNotFoundException $e) {
+            $e->setUsername($username);
+            throw $e;
+        } catch (\Exception $e) {
+            $e = new AuthenticationServiceException($e->getMessage(), 0, $e);
+            $e->setToken($token);
+            throw $e;
+        }
+    }
 
     /**
      * Does additional checks on the user and token (like validating the

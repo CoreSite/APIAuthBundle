@@ -78,18 +78,12 @@ class ApiUserAuthenticationProvider implements AuthenticationProviderInterface
         return $token instanceof APIAuthToken;
     }
 
-
     /**
-     * Retrieves the user from an implementation-specific location.
-     *
-     * @param string $username The username to retrieve
-     * @param TokenInterface $token The Token
-     *
-     * @return UserInterface The user
-     *
-     * @throws AuthenticationException if the credentials could not be validated
+     * @param $username
+     * @param APIAuthToken $token
+     * @return \FOS\UserBundle\Model\UserInterface|mixed
      */
-    protected function retrieveUser($username, TokenInterface $token)
+    protected function retrieveUser($username, APIAuthToken $token)
     {
         $user = $token->getUser();
         if ($user instanceof UserInterface) {
@@ -97,19 +91,20 @@ class ApiUserAuthenticationProvider implements AuthenticationProviderInterface
         }
 
         try {
-            $user = $this->userManager->findUserByUsername($username);
+            $user = $this->userManager->findUserByUsernameOrEmail($username);
 
             if (!$user instanceof UserInterface) {
                 throw new AuthenticationServiceException('The user provider must return a UserInterface object.');
             }
 
             return $user;
-        }
-        catch (UsernameNotFoundException $notFound) {
-            throw $notFound;
-        }
-        catch (\Exception $repositoryProblem) {
-            throw new AuthenticationServiceException($repositoryProblem->getMessage()/*, $token, 0, $repositoryProblem*/);
+        } catch (UsernameNotFoundException $e) {
+            $e->setUsername($username);
+            throw $e;
+        } catch (\Exception $e) {
+            $e = new AuthenticationServiceException($e->getMessage(), 0, $e);
+            $e->setToken($token);
+            throw $e;
         }
     }
 

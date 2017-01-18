@@ -102,7 +102,7 @@ class ApiUserAuthenticationProvider implements AuthenticationProviderInterface
             $e->setUsername($username);
             throw $e;
         } catch (\Exception $e) {
-            $e = new AuthenticationServiceException($e->getMessage(), 0, $e);
+            $e = new AuthenticationServiceException($e->getMessage().'@@@@', 0, $e);
             $e->setToken($token);
             throw $e;
         }

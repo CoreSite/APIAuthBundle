@@ -23,6 +23,7 @@ use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Role\SwitchUserRole;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 
 class ApiUserAuthenticationProvider implements AuthenticationProviderInterface
@@ -51,12 +52,18 @@ class ApiUserAuthenticationProvider implements AuthenticationProviderInterface
      */
     private $encoderFactory;
 
-    public function __construct(UserCheckerInterface $userChecker, $providerKey, $hideUserNotFoundExceptions, UserManager $userManager, EncoderFactoryInterface $encoderFactory)
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
+    public function __construct(UserCheckerInterface $userChecker, $providerKey, $hideUserNotFoundExceptions, UserManager $userManager, EncoderFactoryInterface $encoderFactory, TranslatorInterface $translator)
     {
         $this->userChecker = $userChecker;
         $this->providerKey = $providerKey;
         $this->userManager = $userManager;
         $this->encoderFactory = $encoderFactory;
+        $this->translator = $translator;
     }
 
     /**
@@ -125,17 +132,17 @@ class ApiUserAuthenticationProvider implements AuthenticationProviderInterface
         } else {
 
             if ("" === ($presentedPassword = $token->getCredentials())) {
-                throw new BadCredentialsException(self::MESSAGE_FAIL_PASSWORD_CANNOT_BE_EMPTY);
+                throw new BadCredentialsException($this->translator->trans(self::MESSAGE_FAIL_PASSWORD_CANNOT_BE_EMPTY));
             }
 
             if (!$this->encoderFactory->getEncoder($user)->isPasswordValid($user->getPassword(), $presentedPassword, $user->getSalt())) {
-                throw new BadCredentialsException(self::MESSAGE_FAIL_PASSWORD_IS_INVALID);
+                throw new BadCredentialsException($this->translator->trans(self::MESSAGE_FAIL_PASSWORD_IS_INVALID));
             }
 
             if($user instanceof AccountUserInterface
                 && $user->getAccount() instanceof AccountInterface
                 && $user->getAccount()->getEnabled() == false) {
-                throw new BadCredentialsException(self::MESSAGE_FAIL_ACCOUNT_HAS_BEEN_BLOCKED);
+                throw new BadCredentialsException($this->translator->trans(self::MESSAGE_FAIL_ACCOUNT_HAS_BEEN_BLOCKED));
             }
 
         }

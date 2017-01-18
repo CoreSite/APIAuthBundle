@@ -44,4 +44,5 @@ services:
             - ''
             - '@fos_user.user_manager'
             - '@security.encoder_factory'
+            - '@translator'
         public: false

@@ -26,6 +26,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 
+/**
+ * Выполнение авторизации на основе логина и пароля
+ *
+ * Class ApiUserAuthenticationProvider
+ * @package CoreSite\APIAuthBundle\Security\Authentication\Provider
+ */
 class ApiUserAuthenticationProvider implements AuthenticationProviderInterface
 {
     const MESSAGE_FAIL_ACCOUNT_HAS_BEEN_BLOCKED = 'cs_auth_api.fail.account_has_been_blocked';
@@ -76,7 +82,7 @@ class ApiUserAuthenticationProvider implements AuthenticationProviderInterface
      */
     public function supports(TokenInterface $token)
     {
-        return $token instanceof APIAuthToken;
+        return $token instanceof APIAuthToken && $this->providerKey === $token->getProviderKey();
     }
 
     /**

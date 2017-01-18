@@ -38,6 +38,8 @@ use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterfa
  */
 class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, AuthenticationFailureHandlerInterface, AuthenticationSuccessHandlerInterface
 {
+    const RESPONSE_FAILURE_CODE = 401;
+
     private $tokenManager;
 
     public function __construct(HttpTokenManager $tokenManager)
@@ -45,7 +47,36 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
         $this->tokenManager = $tokenManager;
     }
 
-    const RESPONSE_FAILURE_CODE = 401;
+    public function createToken(Request $request, $providerKey)
+    {
+        $roles = [];
+        $constant = false;
+        $apiKey = null;
+        $authHeader = explode(' ', $request->headers->get('Authorization'));
+        if(isset($authHeader[0]) && $authHeader[0] == 'Bearer' && isset($authHeader[1]))
+        {
+            $apiKey = $authHeader[1];
+        }
+        elseif(isset($authHeader[0]) && $authHeader[0] == 'Token' && isset($authHeader[1]))
+        {
+            $apiKey = $authHeader[1];
+            $constant = true;
+            $roles = ['ROLE_TOKEN_API'];
+        }
+
+        if (!$apiKey) {
+            //return null;
+            throw new BadCredentialsException('No API key found');
+        }
+
+        return new APIAuthToken(
+            'anon.',
+            $apiKey,
+            $providerKey,
+            $roles,
+            $constant
+        );
+    }
 
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
     {
@@ -83,9 +114,9 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
             }
         }
 
-//        if($user instanceof AccountUserInterface && $user->getAccount()->getEnabled() == false) {
-//            throw new CustomUserMessageAuthenticationException(sprintf('Account "%s" has been blocked', $user->getAccount()->getTitle()));
-//        }
+        if($user instanceof AccountUserInterface && $user->getAccount()->getEnabled() == false) {
+            throw new CustomUserMessageAuthenticationException(sprintf('Account "%s" has been blocked', $user->getAccount()->getTitle()));
+        }
 
         return new APIAuthToken(
             $user,
@@ -98,38 +129,7 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
 
     public function supportsToken(TokenInterface $token, $providerKey)
     {
-        return $token instanceof PreAuthenticatedToken && $token->getProviderKey() === $providerKey;
-    }
-
-    public function createToken(Request $request, $providerKey)
-    {
-        $roles = [];
-        $constant = false;
-        $apiKey = null;
-        $authHeader = explode(' ', $request->headers->get('Authorization'));
-        if(isset($authHeader[0]) && $authHeader[0] == 'Bearer' && isset($authHeader[1]))
-        {
-            $apiKey = $authHeader[1];
-        }
-        elseif(isset($authHeader[0]) && $authHeader[0] == 'Token' && isset($authHeader[1]))
-        {
-            $apiKey = $authHeader[1];
-            $constant = true;
-            $roles = ['ROLE_TOKEN_API'];
-        }
-
-        if (!$apiKey) {
-            //return null;
-            throw new BadCredentialsException('No API key found');
-        }
-
-        return new APIAuthToken(
-            'anon.',
-            $apiKey,
-            $providerKey,
-            $roles,
-            $constant
-        );
+        return $token instanceof APIAuthToken && $token->getProviderKey() === $providerKey;
     }
 
     /**

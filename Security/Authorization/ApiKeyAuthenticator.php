@@ -12,6 +12,7 @@ use CoreSite\APIAuthBundle\Entity\HttpToken;
 use CoreSite\APIAuthBundle\Security\Authentication\Provider\ApiKeyUserProvider;
 use CoreSite\APIAuthBundle\Security\Authentication\Token\APIAuthToken;
 use CoreSite\APIAuthBundle\Service\HttpTokenManager;
+use CoreSite\CoreBundle\Entity\AccountInterface;
 use CoreSite\CoreBundle\Entity\AccountUserInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -114,7 +115,7 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
             }
         }
 
-        if($user instanceof AccountUserInterface && $user->getAccount()->getEnabled() == false) {
+        if($user instanceof AccountUserInterface && $user->getAccount() instanceof AccountInterface && $user->getAccount()->getEnabled() == false) {
             throw new CustomUserMessageAuthenticationException(sprintf('Account "%s" has been blocked', $user->getAccount()->getTitle()));
         }
 

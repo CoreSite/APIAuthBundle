@@ -56,7 +56,7 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
                 )
             );
         }
-        
+
         /** @var APIAuthToken $token */
         $apiKey = $token->getCredentials();
         $user = null;
@@ -80,10 +80,10 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
                     sprintf('Bearer "%s" does not exist.', $apiKey)
                 );
             }
+        }
 
-            if($user instanceof AccountUserInterface && !$user->getAccount()->getEnabled()) {
-                throw new CustomUserMessageAuthenticationException('Account has been blocked');
-            }
+        if($user instanceof AccountUserInterface && $user->getAccount()->getEnabled() == false) {
+            throw new CustomUserMessageAuthenticationException('Account has been blocked');
         }
 
         return new APIAuthToken(

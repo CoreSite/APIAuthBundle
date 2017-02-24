@@ -101,7 +101,7 @@ class ApiUserAuthenticationProvider implements AuthenticationProviderInterface
             $user = $this->userManager->findUserByUsernameOrEmail($username);
 
             if (!$user instanceof UserInterface) {
-                throw new AuthenticationServiceException(self::MESSAGE_FAIL_USERNAME_IS_INVALID);
+                throw new AuthenticationServiceException($this->translator->trans(self::MESSAGE_FAIL_USERNAME_IS_INVALID));
             }
 
             return $user;

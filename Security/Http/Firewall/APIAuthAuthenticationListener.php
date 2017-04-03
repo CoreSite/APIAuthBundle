@@ -5,6 +5,7 @@ namespace CoreSite\APIAuthBundle\Security\Http\Firewall;
 use CoreSite\APIAuthBundle\Security\Authentication\Token\APIAuthToken;
 use Symfony\Component\HttpFoundation\Request;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
@@ -65,6 +66,12 @@ class APIAuthAuthenticationListener extends AbstractAuthenticationListener
             $username = trim($request->get($this->options['username_parameter'], null));
             $password = $request->get($this->options['password_parameter'], null);
         }
+
+        if (strlen($username) > Security::MAX_USERNAME_LENGTH) {
+            throw new BadCredentialsException('Invalid username.');
+        }
+
+        $request->getSession()->set(Security::LAST_USERNAME, $username);
 
         return $this->authenticationManager->authenticate(new APIAuthToken($username, $password, $this->providerKey));
     }

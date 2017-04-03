@@ -66,8 +66,8 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface, Authentica
         }
 
         if (!$apiKey) {
-            //return null;
-            throw new BadCredentialsException('No API key found');
+            return null;
+            //throw new BadCredentialsException('No API key found');
         }
 
         return new APIAuthToken(
